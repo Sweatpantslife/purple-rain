@@ -1,5 +1,6 @@
 {
-    "name": "PurpleRainControls",
+    "version": 1,
+    "name": "PurpleRain",
     "maps": [
         {
             "name": "Player",

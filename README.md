@@ -19,7 +19,7 @@ See [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md) for the design overview and an in
 
 | Area | Choice |
 | --- | --- |
-| Engine | Unity 6 LTS (6000.0.x) |
+| Engine | Unity 6000.5.3f1 |
 | Language | C# |
 | Rendering | Universal Render Pipeline (URP) |
 | Input | Unity Input System |
@@ -45,7 +45,7 @@ docs/           # Design documents
 
 ## Opening the Project
 
-1. Install [Unity Hub](https://unity.com/download) and a Unity **6000.0.x LTS** editor (see `ProjectSettings/ProjectVersion.txt` for the pinned version).
+1. Install [Unity Hub](https://unity.com/download) and a Unity **6000.5.3f1** editor (the pinned version in `ProjectSettings/ProjectVersion.txt`).
 2. In Unity Hub: **Add** → **Add project from disk** → select this repository's root folder.
 3. Open the project. Unity will resolve packages from `Packages/manifest.json` and generate the `Library/` cache on first import.
 

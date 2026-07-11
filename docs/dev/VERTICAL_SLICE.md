@@ -1,7 +1,39 @@
 # Vertical Slice — Assembly Guide (A2-S03 "The Name Trade")
 
+> **Status: the scene is now pre-built.** `Assets/Scenes/A2S03_Undercroft.unity` was
+> authored directly as Unity YAML (branch `feat/a2s03-scene-assembly`) together with the
+> graybox materials (`Assets/Materials/Graybox/`), the 7 data assets (`Assets/Data/`),
+> and all puzzle/UI wiring from the manifest — no manual editor assembly is required.
+> The manual, step-by-step build below is kept as a **fallback appendix** in case the
+> pre-built scene needs to be rebuilt or audited by hand.
+
+## Playing the pre-built scene
+
+1. Pull the branch into a **clean checkout** (no uncommitted locally generated `.meta`
+   files; if Unity reports GUID conflicts after switching branches, close Unity and
+   delete `Library/` so the import cache rebuilds).
+2. Open the project in Unity 6000.5.3f1 and open `Assets/Scenes/A2S03_Undercroft.unity`.
+3. Press Play. Run the test checklist in §7 below — spawn is on Nine's landing at
+   `(0, 0, -22)`, facing the tunnel.
+
+Differences from the manual build (deliberate):
+
+- The scene file is named `A2S03_Undercroft.unity` (not `A2S03_NameTrade_Graybox.unity`).
+- The camera uses the Cinemachine wiring (§4's "optional, recommended" variant):
+  **CinemachineBrain** on the root-level Main Camera plus a `CM_FirstPerson`
+  **CinemachineCamera** (Tracking Target = `Player/CameraPivot`, Hard Lock To Target +
+  Rotate With Follow Target) instead of parenting the camera under the pivot.
+- The examine hotspots keep their colliders but have their MeshRenderers disabled (the
+  manifest's §6 alternative for `M_Debug`); `M_Debug` is still authored as a transparent
+  URP/Lit material for future use.
+- The scene is registered in Build Settings alongside `SampleScene`.
+
+---
+
+# Appendix — manual assembly (fallback)
+
 > **Goal:** assemble the playable graybox of scene **A2-S03** / puzzle **P-A2-S03-1** in the Unity editor in ~30 minutes, from the code on this branch plus [GRAYBOX_A2S03_MANIFEST.md](GRAYBOX_A2S03_MANIFEST.md).
-> **Project:** Unity **6000.0.47f1**, URP 17.0.4, Input System 1.11.2 (project is already set to the new Input System only), Cinemachine 3.1.2, uGUI 2.0.0 — all already in `Packages/manifest.json`.
+> **Project:** Unity **6000.5.3f1**, URP 17.5, Input System 1.19.0 (project is already set to the new Input System only), Cinemachine 3.1.7, uGUI 2.5.0 — all already in `Packages/manifest.json`.
 
 ## 0. First open (2 min)
 

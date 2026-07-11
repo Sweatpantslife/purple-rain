@@ -37,7 +37,7 @@ Differences from the manual build (deliberate):
 
 ## 0. First open (2 min)
 
-1. Open the project in Unity 6000.0.47f1. Unity will import the new files under `Assets/Scripts/`, `Assets/Input/`, and generate their `.meta` files.
+1. Open the project in Unity 6000.5.3f1. Unity will import the new files under `Assets/Scripts/`, `Assets/Input/`, and generate their `.meta` files.
 2. **Commit the generated `.meta` files** — this repo commits metas, but the new files were authored outside the editor, so Unity must mint their GUIDs (never hand-write metas).
 3. Confirm the console is clean: `PurpleRain.Runtime.asmdef` should compile with no errors (it references `Unity.InputSystem`, `Unity.Cinemachine`, `UnityEngine.UI`).
 

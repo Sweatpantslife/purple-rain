@@ -14,7 +14,7 @@
 | Player | `Player/PlayerController.cs` | FPS controller: walk/sprint/crouch (smoothed + headroom check)/jump/gravity; pitch on CameraPivot, yaw on body — Cinemachine 3.x-ready, zero Cinemachine API at runtime |
 | Interaction | `Interaction/InteractionVerb.cs`, `IInteractable.cs`, `Interactor.cs`, `InteractableBase.cs`, `ExaminePoint.cs` | raycast interactor with hover/focus C# events + UnityEvent prompt hooks; Examine/PickUp/Use verbs; lockable interactables |
 | Evidence | `Evidence/EvidenceItem.cs`, `EvidenceJournal.cs`, `EvidencePickup.cs` | SO clue defs with **provenance** (surface/below/unsourced — guardrail §8.4 honored from day one); MonoBehaviour-singleton journal service with C# events |
-| UI | `UI/InteractionPromptUI.cs`, `UI/HudMessageUI.cs`, `UI/EvidenceJournalUI.cs` | uGUI debug HUD: hover prompt, one-line message sink, ToggleJournal list |
+| UI | `UI/InteractionPromptUI.cs`, `UI/HudMessageUI.cs`, `UI/WaterFeedStatusUI.cs`, `UI/EvidenceJournalUI.cs` | uGUI debug HUD: hover prompt, queued one-line message sink, junction-balance readout, ToggleJournal list |
 | Slice | `Puzzles/ValveInteractable.cs`, `Puzzles/WaterFeedPuzzle.cs`, `Puzzles/LeachateWallReveal.cs` | state-based order-free valve network; latched solve → beat + reveal sequencing |
 | Input asset | `Assets/Input/PurpleRain.inputactions` | hand-authored JSON, `Player` map: Move/Look/Jump/Sprint/Crouch/Interact/ToggleJournal, KB+M scheme |
 | Docs | `docs/dev/GRAYBOX_A2S03_MANIFEST.md`, `docs/dev/VERTICAL_SLICE.md`, this file | full blockout tables + ~30-min assembly guide |
@@ -35,13 +35,13 @@
 | Compile drift: hand-written code was never compiled here | medium | code sticks to long-stable APIs (CharacterController, Physics, uGUI, InputAction polling); self-review pass done; fix-forward on first editor open is expected to be minutes, not hours |
 | `.inputactions` schema rejection | low | JSON mirrors the Unity 6 template asset in this repo field-for-field (same schema, fresh GUIDs) |
 | asmdef reference names (`Unity.InputSystem`, `Unity.Cinemachine`, `UnityEngine.UI`) | low | names match the assemblies shipped in the pinned package versions in `Packages/manifest.json` |
-| Legacy `Text`/`LegacyRuntime.ttf` deprecation path | low | uGUI 2.0.0 still ships both; if the project later standardizes on TMP, swap the three UI scripts' `Text` fields — they are isolated in `PurpleRain.UI` |
+| Legacy `Text`/`LegacyRuntime.ttf` deprecation path | low | uGUI 2.0.0 still ships both; if the project later standardizes on TMP, swap the four UI scripts' `Text` fields — they are isolated in `PurpleRain.UI` |
 | Trigger volumes vs CharacterController | low | CharacterController generates trigger contacts; player must keep the `Player` tag (documented in the guide) |
 | Canon risk: slice invents Nine barks as HUD text | accepted | placeholder strings, clearly non-canon phrasing kept minimal; real dialogue is Phase 3 writing |
 
 ## 4. Recommended next systems (grounded in GAMEPLAY.md)
 
-Recommended order: **1) Interaction/UI hardening → 2) Stealth + Heat → 3) Dialogue (Riddle Exchange register) → 4) Save/load.**
+Recommended order: **1) Field Notebook + Evidence Board data model → 2) Stealth + Heat → 3) Dialogue (Riddle Exchange register) → 4) Save/load.**
 
 1. **Field Notebook proper + Evidence Board data model** (extends what's here). The journal stub already carries provenance; promote it to the diegetic **Field Notebook** (auto-jot on examine, flagging) and give evidence *source metadata* (where/when/through whom — §2.3 doctrine, and the honest mission-giver metadata that §3.3's fair-play interlock requires later). Cheap now, structural later; everything in Acts 0–IV reads or writes this.
 2. **Stealth (Light/Sound/Sightline) + Heat.** Curriculum order is load-bearing (§4.3, §8.7): A2-S02's depot tutorial precedes A2-S03 in play order, and **Heat** onlines at A2-S02 (scripted floor move #1, §3.2). Building stealth second means the two scenes adjacent to the slice become playable next, giving a contiguous A2-S01→S04 chunk. Heat's data shape (per-district floor + player band, two faces) should be stubbed with the same channel/SO pattern as story beats.

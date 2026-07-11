@@ -45,7 +45,9 @@ namespace PurpleRain.Puzzles
                 // Treat the authored handle pose as matching the starting state, so
                 // scene-authored wheel orientations (e.g. rotated to face the room)
                 // are preserved and the open/close turn composes on top of them.
-                Quaternion startOffset = Quaternion.Euler(0f, 0f, isOpen ? openAngle : 0f);
+                // The turn is about local Y — a Unity Cylinder's axle — so the wheel
+                // spins in its disc plane instead of tipping out of it.
+                Quaternion startOffset = Quaternion.Euler(0f, isOpen ? openAngle : 0f, 0f);
                 handleRestRotation = handle.localRotation * Quaternion.Inverse(startOffset);
             }
         }
@@ -74,7 +76,7 @@ namespace PurpleRain.Puzzles
                 return;
             }
 
-            Quaternion target = handleRestRotation * Quaternion.Euler(0f, 0f, isOpen ? openAngle : 0f);
+            Quaternion target = handleRestRotation * Quaternion.Euler(0f, isOpen ? openAngle : 0f, 0f);
             handle.localRotation = Quaternion.RotateTowards(handle.localRotation, target, handleTurnSpeed * Time.deltaTime);
         }
     }

@@ -13,7 +13,7 @@
 
 1. `File → New Scene` (Basic URP template) → save as `Assets/Scenes/A2S03_NameTrade_Graybox.unity`.
 2. Delete the default **Directional Light**. Lighting window → Environment: set Ambient Color ≈ `#101018` (near-black), no skybox contribution needed for graybox.
-3. Create the 7 materials from **manifest §6** in `Assets/Materials/Graybox/` (URP/Lit; for `M_Leachate` enable Emission, set emission color `#7A3FF2`, intensity ~2).
+3. Create the 7 materials from **manifest §6** in `Assets/Materials/Graybox/` (URP/Lit; for `M_Leachate` enable Emission, set emission color `#7A3FF2`, intensity ~2; for `M_Debug` set **Surface Type = Transparent** so the alpha-zero base color actually renders invisible — Opaque ignores alpha — or skip it and disable the examine hotspots' MeshRenderers instead).
 
 ## 2. Blockout geometry (8 min)
 
@@ -61,6 +61,8 @@ Canvas
 │  └─ PromptText     ← UI → Legacy → Text; stretch to parent; centered; size 20; white
 ├─ MessageRoot       ← anchored top-center, pos (0, -80), size (900, 80)
 │  └─ MessageText    ← Legacy Text; stretch; centered; size 18; color #E8DCC8
+├─ FeedStatusRoot    ← anchored bottom-left, pos (24, 24), size (420, 30)
+│  └─ FeedStatusText ← Legacy Text; stretch; left-aligned; size 16; color #9FB4B8
 └─ JournalPanel      ← UI → Image; anchored right-stretch, width 420; color (0,0,0,0.75)
    ├─ Header         ← Legacy Text "FIELD NOTEBOOK #42 — debug view"; top of panel; size 16; bold
    └─ Content        ← empty RectTransform below header; add Vertical Layout Group
@@ -68,16 +70,17 @@ Canvas
                        + Content Size Fitter (vertical: preferred)
 ```
 
-3. On `Canvas` add the three UI scripts:
+3. On `Canvas` add the four UI scripts:
    - **InteractionPromptUI** — Interactor = Player's Interactor, Prompt Root = `PromptRoot`, Prompt Text = `PromptText`.
-   - **HudMessageUI** — Message Root = `MessageRoot`, Message Text = `MessageText`, Duration 4.
+   - **HudMessageUI** — Message Root = `MessageRoot`, Message Text = `MessageText`, Duration 4. (Messages queue: a bark and a beat fired the same frame display one after the other.)
+   - **WaterFeedStatusUI** — Status Text = `FeedStatusText` (wired to the puzzle in §6 step 2).
    - **EvidenceJournalUI** — Input = Player's provider, Panel Root = `JournalPanel`, Content Parent = `Content`, Entry Template = *(leave empty — entries are created at runtime)*.
 4. On `SYSTEMS` add **StoryBeatListener** — Channel = `SBC-Main`, Filter Beat = *(empty)*, `onBeatText` → **+** → drag `Canvas` → **HudMessageUI → Show (string)** *(pick the "dynamic string" entry at the top of the function list so the beat text is passed through)*.
 
 ## 6. Puzzle wiring (5 min)
 
-1. Add **ValveInteractable** to the four valve pedestals per **manifest §3** (name, starting Is Open state, Handle child). Verb is forced to Use by the script; Display Name comes from Valve Name + live state.
-2. On `PUZZLE/WaterFeedPuzzle` add **WaterFeedPuzzle** — 4 requirements exactly as manifest §3/§7 (fouled ✗ / bypass ✔ / main ✔ / drain ✗), Beat Channel `SBC-Main`, Solved Beat `BEAT-A2S03-FEED-RESTORED`.
+1. Add **ValveInteractable** to the four valve **roots** per **manifest §3** (name, starting Is Open state, Handle = the `Handle` child). Verb is forced to Use by the script; Display Name comes from Valve Name + live state.
+2. On `PUZZLE/WaterFeedPuzzle` add **WaterFeedPuzzle** — 4 requirements exactly as manifest §3/§7 (fouled ✗ / bypass ✔ / main ✔ / drain ✗), Beat Channel `SBC-Main`, Solved Beat `BEAT-A2S03-FEED-RESTORED`. Wire `onProgressChanged (Int32, Int32)` → **+** → drag `Canvas` → **WaterFeedStatusUI → ShowProgress** *(pick the dynamic "int, int" entry)* — this is the puzzle's "wrong routing shows immediately" feedback.
 3. On `PUZZLE/LeachateWallReveal` add **LeachateWallReveal** — Puzzle = `WaterFeedPuzzle`; Enable On Reveal = the two reveal lights; Disable On Reveal = `FlowGrate`; Unlock On Reveal = `Pickup_LeachateSample`'s EvidencePickup; Lock Targets On Start ✔.
 4. Add the **ExaminePoint**s (`Examine_SedimentFan`, `Examine_DatumLine`, `Examine_PressureGauge`, and one on `FlowGrate`) with texts/evidence from manifest §3–4. For each, wire `onExamined (string)` → `Canvas` → **HudMessageUI → Show (string)** *(dynamic string)*.
 5. Add **EvidencePickup** to `Pickup_LeachateSample` (Item `EV-A2S03-SAMPLE`, beat fields per manifest) and wire `onCollectedMessage (string)` → HudMessageUI.Show *(dynamic)*.
@@ -87,16 +90,17 @@ Canvas
 
 Enter Play mode and verify, in order:
 
-- [ ] Mouse look + WASD; Shift sprints (forward only); C/Ctrl crouches (camera dips smoothly, stand blocked under the tunnel ceiling if you jump-crouch beneath it); Space jumps.
+- [ ] Mouse look + WASD; Shift sprints (forward only); C/Ctrl crouches (camera dips smoothly; duck under the landing's low soffit — manifest §2 `CrouchSoffit` — and standing stays blocked until you back out); Space jumps.
 - [ ] Nine's proposition line appears at the landing (once).
-- [ ] Hovering a valve shows `[E] Use: West Intake — Fouled Gallery — OPEN`; E toggles it and the wheel turns.
+- [ ] Hovering a valve shows `[E] Use: West Intake — Upper Gallery — OPEN`; E toggles it and the wheel spins about its axle.
+- [ ] Toggling any valve updates the junction-balance readout (`Junction balance: N/4 legs reading right`) — wrong states report, they never fail.
 - [ ] The three examine points print their read and (two of them) add journal entries; Tab/J toggles the journal list.
 - [ ] The grate examine explains the gate. Setting fouled=CLOSED, bypass=OPEN, main=OPEN, drain=CLOSED (any order) logs `[StoryBeat] BEAT-A2S03-FEED-RESTORED`, shows it on the HUD, opens the grate, and the reveal chamber glows violet down the gallery.
-- [ ] The wall-approach line fires; the sample vial is now interactable (`[E] Take: Violet leachate sample`); taking it logs the sample beat and the journal shows 3 entries with `[Sample · BelowSourced]` on the vial.
+- [ ] The wall-approach line fires (the `BEAT-A2S03-WALL-SEEN` HUD line queues up right after it); the sample vial is now interactable (`[E] Take: Violet leachate sample`); taking it logs the sample beat and the journal shows 3 entries with `[Sample · BelowSourced]` on the vial.
 
 ## 8. Known editor-side gaps
 
 - The graybox NPC "Nine" is text-only (trigger barks); a capsule + look-at is a 5-minute optional extra.
-- No audio, no Waterline water plane, no crouch-forcing geometry — all out of slice scope (see [SLICE_EVALUATION.md](SLICE_EVALUATION.md)).
+- No audio, no Waterline water plane, no crouch-forcing geometry on the critical path (the landing's `CrouchSoffit` is a headroom test, not level design) — all out of slice scope (see [SLICE_EVALUATION.md](SLICE_EVALUATION.md)).
 - If `Physics.Raycast` prompts never appear, check the Interactor's Ray Origin is the **CameraPivot** and that valve colliders aren't set to trigger.
 - If input is dead, check Project Settings → Player → Active Input Handling = **Input System Package (New)** — it already is on main — and that the provider's asset field is assigned.

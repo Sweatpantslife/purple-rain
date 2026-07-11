@@ -33,6 +33,8 @@
 
 Player path: Landing → tunnel → junction (investigate cues, work the valves) → grate releases → gallery → reveal chamber (violet wall re-lit) → take the sample.
 
+> **Staging deviation (deliberate — do not inherit as canon):** PUZZLES.md P-A2-S03-1 and LOCATIONS.md LOC-undercroft route the approach *past* the leachate wall on the way to the junction (the torchlit pre-pass — SCENE_FLOW.md's "violet sheet crossing the torch beam"). This slice compresses the space and inverts that: the wall is only reachable **after** the solve. The pre-puzzle sighting beat is deferred to the full level build; later level design should restore the route-past-the-wall approach rather than copying this layout.
+
 ## 2. Static geometry (all primitive **Cube** unless noted)
 
 | GameObject | Position | Scale | Material | Notes |
@@ -43,6 +45,7 @@ Player path: Landing → tunnel → junction (investigate cues, work the valves)
 | `ENV/Landing/Wall_E` | (3.15, 2, -22) | (0.3, 4, 6) | M_Wall | |
 | `ENV/Landing/Wall_N_L` | (-2.5, 2, -19.15) | (1.6, 4, 0.3) | M_Wall | flanks tunnel mouth (gap x −1.7..1.7) |
 | `ENV/Landing/Wall_N_R` | (2.5, 2, -19.15) | (1.6, 4, 0.3) | M_Wall | |
+| `ENV/Landing/CrouchSoffit` | (2.2, 1.75, -24.3) | (1.6, 0.7, 1.4) | M_Wall | low soffit in the landing's SE corner, underside at Y 1.4 — the crouch/headroom test: duck under it and standing stays blocked until you back out |
 | `ENV/Tunnel/Floor` | (0, -0.1, -12.5) | (4, 0.2, 13) | M_Floor | z −19..−6 |
 | `ENV/Tunnel/Wall_W` | (-2.15, 2, -12.5) | (0.3, 4, 13) | M_Wall | |
 | `ENV/Tunnel/Wall_E` | (2.15, 2, -12.5) | (0.3, 4, 13) | M_Wall | |
@@ -73,15 +76,16 @@ Player path: Landing → tunnel → junction (investigate cues, work the valves)
 
 ## 3. Interactables & puzzle objects
 
-Each valve = a pedestal Cube + a wheel Cylinder child named `Handle` + a `ValveInteractable` (colliders come with the primitives — keep them, non-trigger).
+Each valve = an **empty root at unit scale** (so the children keep their authored world sizes — a scaled Cube parent would shrink and swallow the wheel) with two primitive children: a `Pedestal` Cube standing on the floor and a wheel Cylinder named `Handle` at the pedestal top. `ValveInteractable` goes on the **root** — the Interactor finds it from the pedestal's collider via `GetComponentInParent`. Colliders come with the primitives; keep them, non-trigger.
 
 | GameObject | Position | Scale | Components / serialized fields |
 |---|---|---|---|
-| `PUZZLE/Valve_FouledIntake` (Cube) | (-6.3, 1.2, 1.5) | (0.3, 0.3, 0.3) | `ValveInteractable`: Valve Name `West Intake — Fouled Gallery`, **Is Open ✔ (starts OPEN)**, Handle = child, Verb auto (Use) |
-| └ `Handle` (Cylinder child) | local (0.35, 0, 0) | (0.6, 0.05, 0.6) | rotation (0,0,90) — wheel facing the room |
-| `PUZZLE/Valve_EastBypass` (Cube) | (6.3, 1.2, 1.5) | (0.3, 0.3, 0.3) | `ValveInteractable`: `East Bypass — Clean Gallery`, Is Open ✗ (starts CLOSED); Handle child local (−0.35, 0, 0), scale (0.6, 0.05, 0.6), rotation (0,0,90) |
-| `PUZZLE/Valve_NorthMain` (Cube) | (-3.5, 1.2, 5.7) | (0.3, 0.3, 0.3) | `ValveInteractable`: `Distribution Main — North Gallery`, Is Open ✗; Handle child local (0, 0, −0.35), scale (0.6, 0.05, 0.6), rotation (90,0,0) |
-| `PUZZLE/Valve_ReliefDrain` (Cube) | (-3, 1.2, -3.4) | (0.3, 0.3, 0.3) | `ValveInteractable`: `Relief Drain — Pressure Head`, **Is Open ✔**; Handle child local (0, 0.35, 0), scale (0.6, 0.05, 0.6) |
+| `PUZZLE/Valve_FouledIntake` (empty) | (-6.3, 0, 1.5) | — | `ValveInteractable`: Valve Name `West Intake — Upper Gallery`, **Is Open ✔ (starts OPEN)**, Handle = `Handle` child, Verb auto (Use) |
+| ├ `Pedestal` (Cube child) | local (0, 0.6, 0) | (0.3, 1.2, 0.3) | M_Pipe — stands on the floor, top at Y 1.2 |
+| └ `Handle` (Cylinder child) | local (0.2, 1.2, 0) | (0.6, 0.05, 0.6) | rotation (0,0,90) — 0.6 m wheel facing the room, proud of the pedestal's east face |
+| `PUZZLE/Valve_EastBypass` (empty) | (6.3, 0, 1.5) | — | `ValveInteractable`: `East Bypass — Lower Gallery`, Is Open ✗ (starts CLOSED); Pedestal child as above; Handle child local (−0.2, 1.2, 0), scale (0.6, 0.05, 0.6), rotation (0,0,90) |
+| `PUZZLE/Valve_NorthMain` (empty) | (-3.5, 0, 5.7) | — | `ValveInteractable`: `Distribution Main — North Gallery`, Is Open ✗; Pedestal child as above; Handle child local (0, 1.2, −0.2), scale (0.6, 0.05, 0.6), rotation (90,0,0) |
+| `PUZZLE/Valve_ReliefDrain` (empty) | (-3, 0, -3.4) | — | `ValveInteractable`: `Relief Drain — Pressure Head`, **Is Open ✔**; Pedestal child as above; Handle child local (0, 1.25, 0), scale (0.6, 0.05, 0.6) — horizontal wheel resting on the pedestal top |
 | `PUZZLE/WaterFeedPuzzle` (empty) | (0, 0, 0) | — | `WaterFeedPuzzle` — requirements: FouledIntake **mustBeOpen ✗**, EastBypass **✔**, NorthMain **✔**, ReliefDrain **✗**; Beat Channel `SBC-Main`, Solved Beat `BEAT-A2S03-FEED-RESTORED` |
 | `PUZZLE/FlowGrate` (Cube) | (0, 1.5, 8) | (3.8, 3, 0.2) | M_Grate. `ExaminePoint`: name `Jammed Grate`, text *"An iron grate, seized by decades of pressure differential. Nothing mechanical wrong with it — the junction feed is fighting itself. Re-balance the network and it will swing."* |
 | `PUZZLE/LeachateWallReveal` (empty) | (0, 0, 20) | — | `LeachateWallReveal` — Puzzle = `WaterFeedPuzzle`; Enable On Reveal = [`LIGHTS/L_Reveal_1`, `LIGHTS/L_Reveal_2`]; Disable On Reveal = [`PUZZLE/FlowGrate`]; Unlock On Reveal = [`CLUES/Pickup_LeachateSample`] |
@@ -122,7 +126,7 @@ Scene lighting: delete the default Directional Light; set Environment ambient to
 | `M_Grate` | #2E2E2E | metallic 0.6 |
 | `M_Sediment` | #7A3B2E | the fouled-branch stain |
 | `M_Leachate` | #35244D base, **emission #7A3FF2 × 2** | the wall + sample vial |
-| `M_Debug` | #00000000 (or renderer off) | invisible examine hotspots |
+| `M_Debug` | #00000000 | invisible examine hotspots — **Surface Type = Transparent** (URP/Lit Opaque ignores base-color alpha and would render solid black boxes); or skip the material entirely and disable each hotspot's MeshRenderer, keeping the collider |
 
 ## 7. Puzzle solution (designer reference)
 
@@ -130,12 +134,12 @@ State-based, order-free (canon: "multiple valid valve orders reach the same isol
 
 | Valve | Start | Required | Fiction |
 |---|---|---|---|
-| West Intake — Fouled Gallery | OPEN | **CLOSED** | isolate the contaminated leg |
-| East Bypass — Clean Gallery | CLOSED | **OPEN** | re-route supply through clean galleries |
+| West Intake — Upper Gallery | OPEN | **CLOSED** | isolate the contaminated leg |
+| East Bypass — Lower Gallery | CLOSED | **OPEN** | re-route supply through clean galleries |
 | Distribution Main — North Gallery | CLOSED | **OPEN** | feed the network again |
 | Relief Drain — Pressure Head | OPEN | **CLOSED** | hold pressure — re-pressurize the feed |
 
-No fail states: wrong states just don't solve (WaterFeedPuzzle reports progress via `onProgressChanged`). On solve: `BEAT-A2S03-FEED-RESTORED` (R0 begins), grate opens, reveal lights on, sample unlocks. Sample pickup: `BEAT-A2S03-SAMPLE-LOGGED` (C-02 payoff #1 — the signature the match verb checks for the rest of the game).
+No fail states: wrong states just don't solve — WaterFeedPuzzle reports progress via `onProgressChanged`, surfaced by the `WaterFeedStatusUI` junction-balance readout (see VERTICAL_SLICE.md §5–6). On solve: `BEAT-A2S03-FEED-RESTORED` (R0 begins), grate opens, reveal lights on, sample unlocks. Sample pickup: `BEAT-A2S03-SAMPLE-LOGGED` (the signature the match verb checks for the rest of the game); the wall approach fires `BEAT-A2S03-WALL-SEEN` (C-02 payoff #1).
 
 ## 8. ScriptableObject assets (create in editor; see VERTICAL_SLICE.md §4)
 
@@ -143,8 +147,8 @@ No fail states: wrong states just don't solve (WaterFeedPuzzle reports progress 
 |---|---|---|
 | `Channels/SBC-Main` | Story Beat Channel | Log To Console ✔ |
 | `Beats/BEAT-A2S03-FEED-RESTORED` | Story Beat | id `BEAT-A2S03-FEED-RESTORED`; title `The Feed Restored`; desc `The final valve turn re-lights the chamber. R0 begins — this was never just about him.` |
-| `Beats/BEAT-A2S03-WALL-SEEN` | Story Beat | id `BEAT-A2S03-WALL-SEEN`; title `The Leachate Wall`; desc `The game's first true image of the title (A2-S03 key shot).` |
-| `Beats/BEAT-A2S03-SAMPLE-LOGGED` | Story Beat | id `BEAT-A2S03-SAMPLE-LOGGED`; title `Old Habit, Old Life`; desc `Sample taken, labeled, logged in #42. C-02 payoff #1.` |
+| `Beats/BEAT-A2S03-WALL-SEEN` | Story Beat | id `BEAT-A2S03-WALL-SEEN`; title `The Leachate Wall`; desc `The game's first true image of the title (A2-S03 key shot). C-02 payoff #1 — the folklore is running in real time.` |
+| `Beats/BEAT-A2S03-SAMPLE-LOGGED` | Story Beat | id `BEAT-A2S03-SAMPLE-LOGGED`; title `Old Habit, Old Life`; desc `Sample taken, labeled, logged in #42. The signature the match verb checks against for the rest of the game.` |
 | `Evidence/EV-A2S03-OBS-FOULED` | Evidence Item | id `EV-A2S03-OBS-FOULED`; title `Sediment fan — west intake`; cat Observation; prov BelowSourced; desc `Rust-red fan downstream of the west leg. The fouling source is upstream-west.` |
 | `Evidence/EV-A2S03-OBS-DATUM` | Evidence Item | id `EV-A2S03-OBS-DATUM`; title `High-water datum, 1911`; cat Observation; prov BelowSourced; desc `The junction floods; the brick keeps the record.` |
-| `Evidence/EV-A2S03-SAMPLE` | Evidence Item | id `EV-A2S03-SAMPLE`; title `Violet leachate sample`; cat Sample; prov BelowSourced; desc `Live violet leachate off Works-era brick, labeled and dated. The signature every later match reads against (C-02 payoff #1; R0).` |
+| `Evidence/EV-A2S03-SAMPLE` | Evidence Item | id `EV-A2S03-SAMPLE`; title `Violet leachate sample`; cat Sample; prov BelowSourced; desc `Live violet leachate off Works-era brick, labeled and dated. The signature every later match reads against.` |

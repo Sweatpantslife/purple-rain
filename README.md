@@ -13,7 +13,7 @@ The protagonist loses everything — career, home, reputation, relationships —
 - **Puzzles & riddles** — environmental puzzles and riddles gate progress and reveal the truth.
 - **Narrative quests** — a quest-driven story arc of falling from grace, descending into hell, and clawing your way back.
 
-See [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md) for the full design brief.
+See [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md) for the design overview and an index of the full design package.
 
 ## Planned Tech
 

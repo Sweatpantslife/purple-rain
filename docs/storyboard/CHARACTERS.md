@@ -88,7 +88,7 @@ The kid Lowmarsh kept. Funny, generous with money he doesn't have, loves Adam wi
 - "I didn't know it was for *you*, Adam, I swear, I didn't *ask*—" (A2-S13, the badge confession)
 
 ### Role in the story
-Adam's younger brother; gig courier and gambler. Mystery function: **the frame's physical-access vector** — his purchased debts (T-2025e window, TIMELINE §3) bought the loan of Adam's spare MWA badge (C-07), which was cloned to fabricate the Records access logs that convict Adam legally and destroy the marriage (A1-S05). He is also the story's revenge fulcrum: his murder (staged overdose, Marr's cleanup via Krebs, A3-S08) is the low point and powers the A3-S10 morality valve. Design rule preserved from canon: **the game provides no mechanism to harm Theo** (A2-S13).
+Adam's younger brother; gig courier and gambler. Mystery function: **the frame's physical-access vector** — his purchased debts (T-2025e window, TIMELINE §3) bought the loan of Adam's spare MWA badge (C-07), which was cloned to fabricate the Records access logs that convict Adam legally and destroy the marriage (A1-S05). He is also the story's revenge fulcrum: his murder (staged overdose, Marr's cleanup via Krebs, A3-S08) is the low point and powers the A3-S10 choice valve. Design rule preserved from canon: **the game provides no mechanism to harm Theo** (A2-S13).
 
 ### Arc
 Guilt (A0-S06, visible before the player can name it) → hiding (A1-S06: paid-off slips and a burner the player can find; Adam can't see it, the player can) → confession under the worst circumstances, wearing Marr's wire (A2-S13) → forgiveness he can't accept — Adam's absolution becomes an unpayable debt → a doomed solo penance: taping his confession for Duval (A3-S08) → murdered faster than he can deliver it. Posthumous vindication: his tape and the badge-clone forensics surface from Marr's archive in A4-S09. Adam reads the dismissal order at his grave.
@@ -104,7 +104,7 @@ A0-S06, A1-S06, A2-S13, A3-S08 *(dead: CH-theo — body on scene)*. *(His funera
 **Personality & voice:** never voiced on screen; characterized by residue — tools Adam still owns, a work ethic Adam inherited and Theo fled.
 **Role:** the conspiracy's cost made personal a generation early; his disease matches Konstantin Voss's (C-32) — poisoner and poisoned share a pathology. He is also frame fuel: his death gives Adam the documented "grievance" that makes the prosecution's revenge narrative credible (STORY §4.3 reason 2).
 **Arc:** none (dead nineteen years); his meaning changes twice — private loss (A0) → statistical fact on Mara's map (A3-S15) → count in the lattice (A4-S09).
-**Appears in:** no registered scenes (referenced in A0 backstory; significance lands A3-S15).
+**Appears in:** no registered scenes (his shelf photograph is examinable at A0-S01 — the C-32 seed; significance lands A3-S05/A3-S15).
 
 ---
 

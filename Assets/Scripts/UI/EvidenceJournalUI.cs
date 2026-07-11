@@ -115,29 +115,52 @@ namespace PurpleRain.UI
 
         private void Rebuild()
         {
-            for (int i = 0; i < spawnedEntries.Count; i++)
-            {
-                if (spawnedEntries[i] != null)
-                {
-                    Destroy(spawnedEntries[i]);
-                }
-            }
-            spawnedEntries.Clear();
-
             EvidenceJournal journal = EvidenceJournal.Instance;
             if (journal == null || contentParent == null)
             {
+                for (int i = 0; i < spawnedEntries.Count; i++)
+                {
+                    if (spawnedEntries[i] != null)
+                    {
+                        spawnedEntries[i].SetActive(false);
+                    }
+                }
                 return;
             }
 
-            foreach (EvidenceItem item in journal.Entries)
+            int used = 0;
+            IReadOnlyList<EvidenceItem> items = journal.Entries;
+            for (int i = 0; i < items.Count; i++)
             {
+                EvidenceItem item = items[i];
                 if (item == null)
                 {
                     continue;
                 }
                 string label = $"[{item.Category} · {item.Provenance}] {item.Title}\n{item.Description}";
-                spawnedEntries.Add(CreateEntry(label));
+                if (used < spawnedEntries.Count && spawnedEntries[used] != null)
+                {
+                    GameObject entry = spawnedEntries[used];
+                    entry.GetComponent<Text>().text = label;
+                    entry.SetActive(true);
+                }
+                else if (used < spawnedEntries.Count)
+                {
+                    spawnedEntries[used] = CreateEntry(label);
+                }
+                else
+                {
+                    spawnedEntries.Add(CreateEntry(label));
+                }
+                used++;
+            }
+
+            for (int i = used; i < spawnedEntries.Count; i++)
+            {
+                if (spawnedEntries[i] != null)
+                {
+                    spawnedEntries[i].SetActive(false);
+                }
             }
 
             dirty = false;
